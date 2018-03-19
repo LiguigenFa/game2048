@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<script src="js/jquery-1.8.0.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/rem.js" type="text/javascript" charset="utf-8"></script>
+		<style type="text/css">
+			.faDiv {
+				width: 4rem;
+				background: lightcyan;
+				margin: 0 auto;
+				padding: .15rem;
+				box-sizing: border-box;
+			}
+			
+			.faDiv:after {
+				display: block;
+				clear: both;
+				content: "";
+				visibility: hidden;
+				height: 0;
+			}
+			
+			.fa_two:after {
+				display: block;
+				clear: both;
+				content: "";
+				visibility: hidden;
+				height: 0;
+			}
+			
+			.litDiv {
+				width: .7rem;
+				height: .7rem;
+				margin: 5px;
+				float: left;
+				border: 1px solid gainsboro;
+				box-sizing: border-box;
+				background: lightgrey;
+				text-align: center;
+				font-size: 0.3rem;
+				line-height: .7rem;
+				color: #fff;
+				box-shadow: -2px 0px 8px #f00, 0px -2px 8px #000, 0px 2px 8px #9e038a, 2px 0px 8px #0f0, inset 0px 0px 30px lightcyan;
+				text-shadow: 5px 2px 6px #000;
+				border-radius: 10px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="faDiv">
+
+		</div>
+		<script type="text/javascript">
+			var faDiv = document.getElementsByClassName("faDiv")[0];
+			//循环生成内部div
+			for(var i = 0; i < 4; i++) {
+				$(faDiv).append("<div class='fa_two'><div class='litDiv'></div><div class='litDiv'></div><div class='litDiv'></div><div class='litDiv'></div></div>")
+			}
+			//初始化获得两个随机数
+			var a = Math.floor(Math.random() * 16);
+			//判断两个随机数是否相等，若相等则重新随机
+			roolNum();
+
+			function roolNum() {
+				var b = Math.floor(Math.random() * 16);
+				if(a == b) {
+					roolNum();
+				} else {
+					creatText(a, b);
+				}
+			}
+			//向第a和第b个内部div添加文本节点
+			function creatText(a, b) {
+				var getLitDiv = document.getElementsByClassName("litDiv");
+				$(getLitDiv[a]).html("2");
+				$(getLitDiv[b]).html("2");
+			}
+
+			//上下方向。4列
+			var parr1 = [];
+			var parr2 = [];
+			var parr3 = [];
+			var parr4 = [];
+			var tbArrr = [parr1, parr2, parr3, parr4];
+			for(var i = 0; i < 4; i++) {
+				parr1.push($($(".fa_two")[i]).children(':eq(0)'));
+				parr2.push($($(".fa_two")[i]).children(':eq(1)'));
+				parr3.push($($(".fa_two")[i]).children(':eq(2)'));
+				parr4.push($($(".fa_two")[i]).children(':eq(3)'));
+			}
+
+			//左右方向。4行
+			var tarr1 = [];
+			var tarr2 = [];
+			var tarr3 = [];
+			var tarr4 = [];
+			var lrArr = [tarr1, tarr2, tarr3, tarr4];
+			for(var i = 0; i < 4; i++) {
+				tarr1.push($($(".fa_two")[0]).children(':eq(' + i + ')'));
+				tarr2.push($($(".fa_two")[1]).children(':eq(' + i + ')'));
+				tarr3.push($($(".fa_two")[2]).children(':eq(' + i + ')'));
+				tarr4.push($($(".fa_two")[3]).children(':eq(' + i + ')'));
+			}
+
+			//获取键盘keycode值，37左，38上，39右，40下
+			var sureAdd1 = 0;
+			var sureAdd2 = 0;
+			document.onkeydown = function(event) {
+				sureAdd1 = 0;
+				sureAdd2 = 0;
+				var e = event || window.event || arguments.callee.caller.arguments[0];
+				if(e.keyCode == 37 || e.keyCode == 38 || e.keyCode == 39 || e.keyCode == 40) {
+
+					//向左
+					if(e.keyCode == 37) {
+						goLeft();
+						for(var m = 0; m < 4; m++) {
+							leftTopAddBtn(lrArr[m]);
+						}
+						goLeft();
+						sureAdd();
+					} //向右
+					if(e.keyCode == 39) {
+						goRight();
+						for(var m = 0; m < 4; m++) {
+							rightBottomAddBtn(lrArr[m]);
+						}
+						goRight();
+						sureAdd();
+					}
+					//向上
+					if(e.keyCode == 38) {
+						goTop();
+						for(var m = 0; m < 4; m++) {
+							leftTopAddBtn(tbArrr[m]);
+						}
+						goTop();
+						sureAdd();
+					}
+					//向下
+					if(e.keyCode == 40) {
+						goBottom();
+						for(var m = 0; m < 4; m++) {
+							rightBottomAddBtn(tbArrr[m]);
+						}
+						goBottom();
+						sureAdd();
+					}
+				}
+				noSameColor();
+			}
+
+			function addYextNode() {
+				var litDivLength = $(".litDiv").length;
+				//每次敲击键盘方向键，随机为一个无文本节点的litDiv添加文本节点2
+				roolNumTwo();
+
+				function roolNumTwo() {
+					var roolNumX = Math.floor(Math.random() * 16);
+					//判断div内是否有文字
+					if($($(".litDiv")[roolNumX]).html() == "") {
+						$($(".litDiv")[roolNumX]).html("2");
+					} else {
+						roolNumTwo();
+					}
+				}
+			}
+
+			//向左
+			function goLeft() {
+				for(var m = 0; m < 4; m++) {
+					leftTopBtn(lrArr[m]);
+				}
+			}
+			//向右
+			function goRight() {
+				for(var m = 0; m < 4; m++) {
+					rightBottomBtn(lrArr[m]);
+				}
+			}
+			//向上
+			function goTop() {
+				for(var m = 0; m < 4; m++) {
+					leftTopBtn(tbArrr[m]);
+				}
+			}
+			//向下
+			function goBottom() {
+				for(var m = 0; m < 4; m++) {
+					rightBottomBtn(tbArrr[m]);
+				}
+			}
+
+			//向左或上移动
+			function leftTopBtn(obj) {
+				for(var z = 0; z < 3; z++) {
+					if(obj[z].html() == "") {
+						for(var r = 0; r < 4; r++) {
+							if(r > z && obj[r].html() != "") {
+								obj[z].html(obj[r].html());
+								obj[r].html("");
+								sureAdd1 = 1;
+								break;
+							}
+						}
+					}
+				}
+			}
+			//向右或下移动
+			function rightBottomBtn(obj) {
+				for(var z = 3; z > 0; z--) {
+					if(obj[z].html() == "") {
+						for(var r = 3; r > -1; r--) {
+							if(r < z && obj[r].html() != "") {
+								obj[z].html(obj[r].html());
+								obj[r].html("");
+								sureAdd1 = 1;
+								break;
+							}
+						}
+					}
+				}
+			}
+			//向左或向上移动后相邻值相同则相加
+			function leftTopAddBtn(obj) {
+				for(var z = 0; z < 3; z++) {
+					if(obj[z].html() == obj[z + 1].html() && obj[z + 1].html() != "") {
+						obj[z].html(obj[z].html() * 2);
+						obj[z + 1].html("");
+						sureAdd2 = 1;
+					}
+				}
+			}
+			//向右或向下移动后相邻值相同则相加
+			function rightBottomAddBtn(obj) {
+				for(var z = 3; z > 0; z--) {
+					if(obj[z].html() == obj[z - 1].html() && obj[z - 1].html() != "") {
+						obj[z].html(obj[z].html() * 2);
+						obj[z - 1].html("");
+						sureAdd2 = 1;
+					}
+				}
+			}
+
+			//判断是否产生移动或长生相加。产生则生成一个新的“2”
+			function sureAdd() {
+				if(sureAdd2 == 1 || sureAdd1 == 1) {
+					addYextNode();
+				} else {
+					setTimeout(sureAdd(), 50);
+				}
+			}
+			noSameColor()
+			//为不同数字的div设置不同背景颜色
+			function noSameColor() {
+				var getLitDiv = document.getElementsByClassName("litDiv");
+				for(var f = 0; f < getLitDiv.length; f++) {
+					if($(getLitDiv[f]).html() == 2) {
+						$(getLitDiv[f]).css("background", "lightpink");
+					} else if($(getLitDiv[f]).html() == 4) {
+						$(getLitDiv[f]).css("background", "lightsalmon");
+					} else if($(getLitDiv[f]).html() == 8) {
+						$(getLitDiv[f]).css("background", "lightseagreen");
+					} else if($(getLitDiv[f]).html() == 16) {
+						$(getLitDiv[f]).css("background", "lightsteelblue");
+					} else if($(getLitDiv[f]).html() == 32) {
+						$(getLitDiv[f]).css("background", "orange");
+					} else if($(getLitDiv[f]).html() == 64) {
+						$(getLitDiv[f]).css("background", "blueviolet");
+					} else if($(getLitDiv[f]).html() == 128) {
+						$(getLitDiv[f]).css("background", "darkgreen");
+					} else if($(getLitDiv[f]).html() == 256) {
+						$(getLitDiv[f]).css("background", "firebrick");
+					} else if($(getLitDiv[f]).html() == 512) {
+						$(getLitDiv[f]).css("background", "saddlebrown");
+					} else if($(getLitDiv[f]).html() == 1024) {
+						$(getLitDiv[f]).css("background", "orchid");
+					} else if($(getLitDiv[f]).html() == 2048) {
+						$(getLitDiv[f]).css("background", "plum");
+					} else {
+						$(getLitDiv[f]).css("background", "lightgrey");
+					}
+				}
+			}
+			//判断游戏是否结束
+			function gameOver(){
+				//不想写了
+			}
+		</script>
+	</body>
+
+</html>
